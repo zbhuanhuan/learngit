@@ -1,0 +1,4 @@
+wanghuan\task2\pojo\Student.class
+wanghuan\task2\mapper\StudentMapper.class
+wanghuan\task2\service\StudentService.class
+wanghuan\task2\service\impl\StudentServiceImpl.class

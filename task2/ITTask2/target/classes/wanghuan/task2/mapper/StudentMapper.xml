@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="wanghuan.task2.mapper.StudentMapper">
+	<resultMap type="Student" id="studentMap">
+		<id column="id" property="id" />
+		<result column="name" property="name"/>
+		<result column="qq" property="qq"/>
+		<result column="study_type" property="study_type"/>
+		<result column="study_date" property="study_date"/>
+		<result column="college" property="college"/>
+		<result column="online_code" property="online_code"/>
+		<result column="report_url" property="report_url"/>
+		<result column="wish" property="wish"/>
+		<result column="introducer" property="introducer"/>
+		<result column="create_at" property="create_at"/>
+		<result column="update_at" property="update_at"/>
+	</resultMap>
+	
+	<!-- 公共的sql语句，适合select和delete -->
+	<sql id="ifWhere">
+		<where>
+			<if test="id!=null and id!=''">and id=#{id}</if>
+			<if test="name!=null and name!=''">and name LIKE  '%' #{name} '%'</if>
+			<if test="qq!=null and qq!=''">and qq=#{qq}</if>
+			<if test="study_type!=null and study_type!=''">study_type=#{study_type}</if>
+			<if test="create_at!=null and create_at!=''">create_at=#{create_at}</if>
+			<if test="update_at!=null and update!=''">update_at=#{update_at}</if>
+		</where>
+	</sql>
+	<!-- 查询学生信息 -->
+	<select id="findStudentById" parameterType="int" resultMap="studentMap">
+		select * from student   where id = #{id}
+		 <!--<include refid="ifWhere"/>-->
+	</select>
+	
+	<!-- 增加学生并返回id的关键配置keyProperty -->
+	<insert id="addStudent" parameterType="Student" keyProperty="id" useGeneratedKeys="true">
+		<!-- 添加学生返回id   这种做法是适合oracle的返回主键id的
+		<selectKey keyProperty="id" resultType="int" order="AFTER" >
+			select id from student
+		</selectKey>
+		-->
+		insert into student 
+		values(#{id},#{name},#{qq},#{study_type},#{study_date},#{college},#{online_code},
+		#{report_url},#{wish},#{introducer},#{create_at},#{update_at})
+	</insert>
+	
+	<!-- 批量增加 -->
+	<insert id="addStudentBatch" parameterType="Student">
+		insert into 
+		student
+		values
+			<foreach collection="list" index="index" item="item" separator="," >
+				item.name = #{item.name},
+				item.qq = #{item.qq},
+				item.study_type = #{item.study_type},
+				item.college = #{item.college},
+				item.online_code = #{item.online_code},
+				item.report_url = #{item.report_url},
+				item.wish = #{item.wish},
+				item.introducer = #{item.introducer},
+				item.create_at = #{item.create_at},
+				item.update_at = #{item.update_at}
+			</foreach>
+		
+	</insert>
+	
+	
+	<!-- 删除学生 -->
+	<delete id="deleteStudentById" parameterType="int">
+		delete from student                  where id = #{id}
+		<!--<include refid="ifWhere"/>-->
+	</delete>
+	
+	<!-- 修改学生信息 -->
+	<update id="updateStudent" parameterType="Student" >
+		<!--  
+		update student 
+		set name=#{name},qq=#{qq},study_type=#{study_type},college=#{college},online_code=#{onlie_code},
+			report_url=#{report_url},wish=#{wish},introducer=#{introducer},create_at=#{create_at},update_at=#{update_at}
+		where id=#{id} 
+		-->
+		update student
+		<set>
+			<if test="name!=null">name = #{name},</if>
+			<if test="qq!=null">qq = #{qq},</if>
+			<if test="study_type!=null">study_type = #{study_type},</if>
+			<if test="college!=null">college = #{college},</if>
+			<if test="online_code!=null">online_code = #{online_code},</if>
+			<if test="report_url!=null">report_url = #{report_url},</if>
+			<if test="wish!=null">wish = #{wish},</if>
+			<if test="introducer!=null">introducer = #{introducer},</if>
+			<if test="create_at!=null">create_at = #{create_at},</if>
+			<if test="update_at!=null">update_at = #{update_at}</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<!-- 根据姓名查询学生信息 -->
+	<select id="findStudentByName" parameterType="String"  resultType="Student">
+		select * from student 
+		where name LIKE  '%' #{name} '%'
+	</select>
+</mapper>
