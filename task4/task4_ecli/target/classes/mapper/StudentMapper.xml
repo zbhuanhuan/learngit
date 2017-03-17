@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper  namespace="com.task4.mapper.StudentMapper">
+	<resultMap type="Student" id="studentMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="introduction" property="introduction"/>
+		<result column="type" property="type"/>
+		<result column="good" property="good"/>
+	</resultMap>
+	
+	<select id="findGoodStudent" resultMap="studentMap">
+		select * from student
+	</select>
+
+</mapper>
