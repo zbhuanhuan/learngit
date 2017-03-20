@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.task4.mapper.ProfessionMapper">
+    <resultMap type="com.task4.pojo.Profession" id="ProfessionResult">
+        <id column="p_id" property="id"/>
+        <result column="pname" property="name"/>
+    </resultMap>
+
+    <resultMap type="com.task4.pojo.Profession" id="OccupationResult">
+        <id column="p_id" property="id"/>
+        <result column="pname" property="name"/>
+        <collection  property="occupationList" column="pro_occu_id" ofType="com.task4.pojo.Occupation">
+            <id column="id" property="id"/>
+            <result column="t_id" property="t_id"/>
+            <result column="p_id" property="p_id"/>
+            <result column="tname" property="tname"/>
+            <result column="people_studing" property="people_studing"/>
+            <result column="career_threshold" property="career_threshold"/>
+            <result column="difficulty_level" property="difficulty_level"/>
+            <result column="growth_circle" property="growth_circle"/>
+            <result column="wangted_company" property="wangted_company"/>
+            <result column="enroll_basis" property="enroll_basis"/>
+            <result column="t_intro" property="t_intro"/>
+            <collection property="salariesList" column="occu_sala_id" ofType="com.task4.pojo.Salaries" >
+                <id column="s_id" property="s_id"/>
+                <result column="type_id" property="type_id"/>
+                <result column="type_name" property="type_name"/>
+                <result column="years" property="years"/>
+                <result column="salary" property="salary"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <!-- 查询单个Occupation -->
+    <select id="selectOccupationDetails"  resultMap="OccupationResult" parameterType="int" >
+        select
+        p.pname,
+        t.tname,
+        t.people_studing,
+        t.career_threshold,
+        t.difficulty_level,
+        t.growth_circle,
+        t.wangted_company,
+        t.enroll_basis,
+        t.t_intro,
+        s.years,
+        s.salary
+        from typedetail t
+        left join profession p on p.pro_occu_id = t.id
+        left join  salaries s on s.s_id = t.occu_sala_id
+        where t.p_id = #{id}
+        GROUP BY t.tname
+        ORDER BY p.pname,t.tname
+    </select>
+    <!--查询多个Occupation  -->
+    <select id="selectAllOccupationDetails"  resultMap="OccupationResult" >
+        select
+        p.pname,
+        t.tname,
+        t.people_studing,
+        t.career_threshold,
+        t.difficulty_level,
+        t.growth_circle,
+        t.wangted_company,
+        t.enroll_basis,
+        t.t_intro,
+        s.years,
+        s.salary
+        from typedetail t
+        left join profession p on p.pro_occu_id = t.id
+        left join  salaries s on s.s_id = t.occu_sala_id
+        GROUP BY t.tname
+        ORDER BY p.pname,t.tname
+    </select>
+
+
+    <!-- 查询所有职业类型 -->
+    <select id="selectAllProfessions" resultMap="ProfessionResult" >
+        select * from profession
+        group by pname
+    </select>
+    <!-- 查询某一个职业 -->
+    <select id="selectProfessionById" parameterType="int" resultMap="ProfessionResult">
+        select * from profession where p_id =#{id}
+    </select>
+</mapper>
